@@ -1,0 +1,27 @@
+# Maven
+target/
+
+# Logs
+*.log
+hs_err_pid*.log
+
+# VS Code
+.vscode/
+
+# IDEs
+.idea/
+*.iml
+
+# Drivers
+chromedriver*
+geckodriver*
+
+# Arquivos temporários / usuário
+.bash_history
+.node_repl_history
+.token_seed*
+config.json
+
+# OS
+.DS_Store
+Thumbs.db
