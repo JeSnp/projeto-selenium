@@ -1,27 +1,21 @@
 # Maven
 target/
-
-# Logs
 *.log
-hs_err_pid*.log
 
-# VS Code
+# IDEs e configs locais
 .vscode/
-
-# IDEs
 .idea/
 *.iml
 
-# Drivers
-chromedriver*
-geckodriver*
+# Drivers, builds e perfis temporários
+chromedriver.exe
+geckodriver.exe
+tempProfile_*/
 
-# Arquivos temporários / usuário
-.bash_history
-.node_repl_history
-.token_seed*
-config.json
-
-# OS
+# Sistema operacional
 .DS_Store
 Thumbs.db
+
+# Arquivos de cache
+*.class
+*.tmp

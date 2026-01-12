@@ -38,7 +38,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.exemplo.selenium.TesteSelenium</mainClass>
+                    <mainClass>com.exemplo.selenium.TesteLogin</mainClass>
                 </configuration>
             </plugin>
         </plugins>
