@@ -21,7 +21,7 @@ public class DriverFactory {
             options.addArguments("--no-default-browser-check");
             options.addArguments("--disable-infobars");
 
-            // ✅ 1ª opção (gera perfil novo a cada execução)
+            
             options.addArguments("--user-data-dir=" + System.getProperty("user.dir") + "/tempProfile_" + System.currentTimeMillis());
 
             driver = new ChromeDriver(options);
