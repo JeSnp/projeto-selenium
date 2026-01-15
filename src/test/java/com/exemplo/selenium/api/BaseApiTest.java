@@ -1,15 +1,81 @@
 package com.exemplo.selenium.api;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import io.restassured.RestAssured;
+import io.restassured.parsing.Parser;
 import io.restassured.specification.RequestSpecification;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class BaseApiTest {
 
+    static WireMockServer wireMockServer;
+
+    @BeforeAll
+    public static void setup() {
+        // 🔹 Inicia o mock server
+        wireMockServer = new WireMockServer(8080);
+        System.setProperty("file.encoding", "UTF-8");
+        wireMockServer.start();
+
+        // 🔹 Configura o RestAssured
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = 8080;
+        RestAssured.defaultParser = Parser.JSON;
+
+        // 🔹 Configura o WireMock
+        configureFor("localhost", 8080);
+
+        // ----------------------------------------------------------
+        // MOCKS DE LOGIN
+        // ----------------------------------------------------------
+
+        // 1️⃣ Login válido
+        stubFor(post(urlEqualTo("/login"))
+            .withRequestBody(matchingJsonPath("$.username", equalTo("user")))
+            .withRequestBody(matchingJsonPath("$.password", equalTo("123456")))
+            .willReturn(aResponse()
+                .withHeader("Content-Type", "application/json; charset=UTF-8")
+                .withStatus(200)
+                .withBody("{\"token\":\"abc123\", \"perfil\":\"ADMIN\"}")));
+
+        // 2️⃣ Credenciais inválidas
+        stubFor(post(urlEqualTo("/login"))
+            .withRequestBody(matchingJsonPath("$.password", equalTo("senha_errada")))
+            .willReturn(aResponse()
+                .withHeader("Content-Type", "application/json; charset=UTF-8")
+                .withStatus(401)
+                .withBody("{\"mensagem\":\"Usuário ou senha incorretos\"}")));
+
+        // 3️⃣ Usuário sem permissão
+        stubFor(post(urlEqualTo("/login"))
+            .withRequestBody(matchingJsonPath("$.username", equalTo("user_sem_permissao")))
+            .willReturn(aResponse()
+                .withHeader("Content-Type", "application/json; charset=UTF-8")
+                .withStatus(403)
+                .withBody("{\"mensagem\":\"sem permissão\"}")));
+
+        // 4️⃣ Usuário bloqueado
+        stubFor(post(urlEqualTo("/login"))
+            .withRequestBody(matchingJsonPath("$.username", equalTo("user_bloqueado")))
+            .willReturn(aResponse()
+                .withHeader("Content-Type", "application/json; charset=UTF-8")
+                .withStatus(423)
+                .withBody("{\"mensagem\":\"bloqueado\"}")));
+    }
+
+    @AfterAll
+    public static void teardown() {
+        if (wireMockServer != null && wireMockServer.isRunning()) {
+            wireMockServer.stop();
+        }
+    }
+
     protected RequestSpecification request() {
         return RestAssured
-                .given()
-                .baseUri("https://google.com") 
-                .basePath("/api")
-                .contentType("application/json");
+            .given()
+            .contentType("application/json");
     }
 }
